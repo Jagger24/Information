@@ -1,16 +1,16 @@
 Responsibilities of Each Person:
-Cat:
+> Cat:
 - Hashing algorithm with customizable length
-  > will allow us to create:
+  - will allow us to create:
     - 6 & 9 character code
-Abdi:
+> Abdi:
 - get input of random hash from users from Ruby on Rails @ Login & @ Password Forget
 - let the user know if the code matches their account
-Evan:
+> Evan:
 - create encryption & decryption algorithm to protect all hash codes safe in database
-Rebecca:
+> Rebecca:
 - coding the SMS that sends the 6 & 9-character codes
-Jeff:
+> Jeff:
 - create all functions/interface of the website/controller & database methods for each part of the process
 
 ====
