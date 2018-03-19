@@ -14,6 +14,7 @@ Jeff:
 - create all functions/interface of the website/controller & database methods for each part of the process
 
 ====
+
 Details of Project:
 > 6-Character Code = sent to user for all subsequent login's after the user signs up (no 6-char code sent at sign-up)
   - 1 code will be sent at login, 1-time use
