@@ -14,6 +14,12 @@ class AttemptsController < ApplicationController
 
   # GET /attempts/new
   def new
+    @token = Token.new
+    @token.user_id = current_user.id
+    @token.code = "12345"
+    #CREATE THE HASHING FUNCTION HERE TO SEND USER THE CODE!!!
+    @token.save
+    @test = Token.find_by user_id: current_user.id
     @attempt = Attempt.new
   end
 
