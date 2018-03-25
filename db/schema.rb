@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180325145554) do
+ActiveRecord::Schema.define(version: 20180325152420) do
 
   create_table "tokens", force: :cascade do |t|
-    t.string "email"
+    t.integer "user_id"
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
