@@ -3,7 +3,7 @@
 
 <%if user_signed_in?%>
 	<%= link_to 'Sign out', destroy_user_session_path,{:method =>:delete}%>
-	<%= @mail %>
+	<%= @test.user_id%>
 
 <%else%>
 	<a href = /users/sign_in>Log In</a>

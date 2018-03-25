@@ -14,11 +14,16 @@ class AttemptsController < ApplicationController
 
   # GET /attempts/new
   def new
-    @token = Token.new
-    @token.user_id = current_user.id
-    @token.code = "12345"
-    #CREATE THE HASHING FUNCTION HERE TO SEND USER THE CODE!!!
-    @token.save
+    @test = Token.find_by user_id: current_user.id
+    Attempt.where(:user_id => current_user.id).destroy_all #important CHANGE FOR SPECIFIC USER
+    if @test.nil?
+      @token = Token.new
+      @token.user_id = current_user.id
+      @token.code = "12346"
+      @token.save
+    end
+    #CREATE THE HASHING FUNCTION HERE TO SEND USER THE COE!!!
+    
     @test = Token.find_by user_id: current_user.id
     @attempt = Attempt.new
   end
@@ -31,16 +36,18 @@ class AttemptsController < ApplicationController
   # POST /attempts.json
   def create
     @attempt = Attempt.new(attempt_params)
+    @attempt.user_id = current_user.id
 
-    respond_to do |format|
+    #respond_to do |format|
       if @attempt.save
-        format.html { redirect_to @attempt, notice: 'Attempt was successfully created.' }
-        format.json { render :show, status: :created, location: @attempt }
+        #format.html { redirect_to @attempt, notice: 'Attempt was successfully created.' }
+        #format.json { render :show, status: :created, location: @attempt }
+        redirect_to "/welcome/index"
       else
         format.html { render :new }
         format.json { render json: @attempt.errors, status: :unprocessable_entity }
       end
-    end
+    #end
   end
 
   # PATCH/PUT /attempts/1
@@ -75,6 +82,6 @@ class AttemptsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def attempt_params
-      params.require(:attempt).permit(:content, :user_id)
+      params.require(:attempt).permit(:content)
     end
 end
