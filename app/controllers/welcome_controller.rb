@@ -11,6 +11,10 @@ class WelcomeController < ApplicationController
   	if !@test.nil?
 	  	if user_signed_in?
 	  		@token = Token.find_by user_id: current_user.id
+	  		if @token.nil?
+	  			@token = Token.new
+	  			@token.code = 1
+	  		end
 	  		@token_code = @token.code
 	  		@attempt = Attempt.find_by user_id: current_user.id
 	  		@attempt_code = @attempt.content
