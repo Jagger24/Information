@@ -19,7 +19,7 @@ class AttemptsController < ApplicationController
     if @test.nil?
       @token = Token.new
       @token.user_id = current_user.id
-      @token.code = "12346"
+      @token.code = random_hash(6)
       @token.save
     end
     #CREATE THE HASHING FUNCTION HERE TO SEND USER THE COE!!!
@@ -84,4 +84,33 @@ class AttemptsController < ApplicationController
     def attempt_params
       params.require(:attempt).permit(:content)
     end
+
+   
+	#Hash Code Function
+	def random_hash(number)
+
+	hash = ""
+
+	#create pool of characters to draw from
+	upalpha = ('A'..'Z').to_a
+	lowalpha = ('a'..'z').to_a
+	num =('1'..'9').to_a
+	charset = upalpha + lowalpha + num 
+
+	#used to limit length of hashcode that's generated
+	count = 0
+
+	#While Loop to Create Hash Function
+	while count < number do
+	hash = hash + charset.sample
+	count += 1
+	end
+
+	#print Hashcode as string
+	return hash
+
+	#end method
+	end
+   
+
 end
