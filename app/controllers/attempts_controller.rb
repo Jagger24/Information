@@ -89,22 +89,22 @@ class AttemptsController < ApplicationController
 	#Hash Code Function
 	def random_hash(number)
 
-	hash = ""
+	   hash = ""
 
-	#create pool of characters to draw from
-	upalpha = ('A'..'Z').to_a
-	lowalpha = ('a'..'z').to_a
-	num =('1'..'9').to_a
-	charset = upalpha + lowalpha + num 
+  	#create pool of characters to draw from
+  	upalpha = ('A'..'Z').to_a
+  	lowalpha = ('a'..'z').to_a
+  	num =('1'..'9').to_a
+  	charset = upalpha + lowalpha + num 
 
-	#used to limit length of hashcode that's generated
-	count = 0
+  	#used to limit length of hashcode that's generated
+  	count = 0
 
-	#While Loop to Create Hash Function
-	while count < number do
-	hash = hash + charset.sample
-	count += 1
-	end
+  	#While Loop to Create Hash Function
+  	while count < number do
+    	hash = hash + charset.sample
+    	count += 1
+	   end
 
 	#print Hashcode as string
 	return hash
