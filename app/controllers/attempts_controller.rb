@@ -21,6 +21,10 @@ class AttemptsController < ApplicationController
       @token.user_id = current_user.id
       @token.code = random_hash(6)
       @token.save
+
+      #current_user might not be right
+      UserNotifierMailer.send_email.deliver
+ 
     end
     #CREATE THE HASHING FUNCTION HERE TO SEND USER THE COE!!!
     
