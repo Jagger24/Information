@@ -1,0 +1,2 @@
+class Ptoken < ApplicationRecord
+end

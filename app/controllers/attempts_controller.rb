@@ -14,6 +14,19 @@ class AttemptsController < ApplicationController
 
   # GET /attempts/new
   def new
+    @sign_up = Ptoken.find_by user_id: current_user.id
+    if @sign_up.nil? #create 5 password retrieval tokens if they have 0!
+      @codes = Array.new
+      5.times do 
+        @tok = Ptoken.new
+        @tok.user_id = current_user.id
+        @tok.code = random_hash(12)
+        @codes.push(@tok.code)
+        @tok.save
+      end
+      UserNotifierMailer.token_email(current_user,@codes).deliver
+      #CREATE NEW EMAIL HERE!!!!
+    end
     @test = Token.find_by user_id: current_user.id
     Attempt.where(:user_id => current_user.id).destroy_all
     if @test.nil?
@@ -25,7 +38,10 @@ class AttemptsController < ApplicationController
       #current_user might not be right
       UserNotifierMailer.send_email(current_user, @token.code).deliver
  
+    else
+      UserNotifierMailer.send_email(current_user, @test.code).deliver 
     end
+
     #CREATE THE HASHING FUNCTION HERE TO SEND USER THE COE!!!
     
     @test = Token.find_by user_id: current_user.id
