@@ -1,6 +1,4 @@
-<h1>Enter in your security code</h1>
+<h1>Enter in your security code from your email!</h1>
 
 <%= render 'form', attempt: @attempt %>
-<%= @test.code %>
 <%= link_to 'Sign out', destroy_user_session_path,{:method =>:delete}%>
-<%= link_to 'Back', attempts_path %>

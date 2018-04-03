@@ -15,7 +15,7 @@ class AttemptsController < ApplicationController
   # GET /attempts/new
   def new
     @test = Token.find_by user_id: current_user.id
-    Attempt.where(:user_id => current_user.id).destroy_all #important CHANGE FOR SPECIFIC USER
+    Attempt.where(:user_id => current_user.id).destroy_all
     if @test.nil?
       @token = Token.new
       @token.user_id = current_user.id
