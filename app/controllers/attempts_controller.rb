@@ -25,7 +25,6 @@ class AttemptsController < ApplicationController
         @tok.save
       end
       UserNotifierMailer.token_email(current_user,@codes).deliver
-      #CREATE NEW EMAIL HERE!!!!
     end
     @test = Token.find_by user_id: current_user.id
     Attempt.where(:user_id => current_user.id).destroy_all
@@ -39,7 +38,7 @@ class AttemptsController < ApplicationController
       UserNotifierMailer.send_email(current_user, @token.code).deliver
  
     else
-      UserNotifierMailer.send_email(current_user, @test.code).deliver 
+      UserNotifierMailer.send_email(current_user, @test.code).deliver  #send the code if they forgot it basically! HOWEVER IF THEY GET THE CODE WRONG THEY GET ANOTHER REDUNDANT EMAIL!!!
     end
 
     #CREATE THE HASHING FUNCTION HERE TO SEND USER THE COE!!!
