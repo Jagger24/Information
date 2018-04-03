@@ -23,7 +23,7 @@ class AttemptsController < ApplicationController
       @token.save
 
       #current_user might not be right
-      UserNotifierMailer.send_email.deliver
+      UserNotifierMailer.send_email(current_user, @token.code).deliver
  
     end
     #CREATE THE HASHING FUNCTION HERE TO SEND USER THE COE!!!

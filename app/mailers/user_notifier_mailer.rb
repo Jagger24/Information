@@ -1,8 +1,8 @@
 class UserNotifierMailer < ApplicationMailer
-	default :from => 'jaggerjeffrey@gmail.com'
+	default :from => '4471noreply@gmail.com'
 
-	def send_email
-		#@user = current_user
-		mail( :to => 'jaggerjeffrey@gmail.com')
+	def send_email(user, code)
+		@code = code
+		mail( :to => user.email)
 	end
 end
