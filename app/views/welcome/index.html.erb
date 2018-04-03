@@ -1,12 +1,51 @@
-<h1>Welcome#index</h1>
-<p>Find me in app/views/welcome/index.html.erb</p>
+<!DOCTYPE html>
+<!-- saved from url=(0075)file:///C:/Users/Cath/Documents/1.%20TO%20DO/CSE%204471/Cath_Front_End.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<title>4471 Final Project</title>
+	<style type="text/css">
+			
+		.outer {
+			background-color:rgb(60,179,113);
+			text-align:center;
+			padding: 30px;
+			margin: 50px;
+		}
+		
+		.title {
+			background-color:white;
+			padding: 15px;
+			margin: 20px;
+		}
+	</style>
+</head>
+
+<body style="background-color:rgba(60,179,113,0.6)">
+
+	<div class="outer">
+		<%= image_tag "earth_pic.png", :height => '250px' %>
+		
+		<div class="title">
+		<!--Title of website here:-->
+		<h1>Anywhere On Earth</h1>
+		</div>
+
+		<p style="color:white"><b>You will have access.</b></p>
+		<p style="color:white"><b>Always safe, never compromised.</b></p>
 
 <%if user_signed_in?%>
 	<%= link_to 'Sign out', destroy_user_session_path,{:method =>:delete}%>
 	<%= @test.user_id%>
+	<!--need website content here-->
+	
 
 <%else%>
-	<a href = /users/sign_in>Log In</a>
-	<a href = /users/sign_up>Sign up</a>	
+	<a class="button" href="/users/sign_in">Log In</a>
+	<a class="button" href="/users/sign_up">Sign up</a>
 
 <%end%>
+
+	</div>
+
+
+
+</body></html>
