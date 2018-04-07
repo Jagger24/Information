@@ -1,26 +1,5 @@
-<!DOCTYPE html>
-<!-- saved from url=(0075)file:///C:/Users/Cath/Documents/1.%20TO%20DO/CSE%204471/Cath_Front_End.html -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-	<title>4471 Final Project</title>
-	<style type="text/css">
-			
-		.outer {
-			background-color:rgb(60,179,113);
-			text-align:center;
-			padding: 30px;
-			margin: 50px;
-		}
-		
-		.title {
-			background-color:white;
-			padding: 15px;
-			margin: 20px;
-		}
-	</style>
-</head>
 
-<body style="background-color:rgba(60,179,113,0.6)">
-
+<div class="center jumbotron">
 	<div class="outer">
 		<%= image_tag "earth_pic.png", :height => '250px' %>
 		
@@ -29,8 +8,8 @@
 		<h1>Anywhere On Earth</h1>
 		</div>
 
-		<p style="color:white"><b>You will have access.</b></p>
-		<p style="color:white"><b>Always safe, never compromised.</b></p>
+		<p><b>You will have access.</b></p>
+		<p><b>Always safe, never compromised.</b></p>
 
 <%if user_signed_in?%>
 	<%= link_to 'Sign out', destroy_user_session_path,{:method =>:delete}%>
@@ -40,13 +19,13 @@
 	
 
 <%else%>
-	<a class="button" href="/users/sign_in">Log In</a>
-	<a class="button" href="/users/sign_up">Sign up</a>
+	
+	<%= link_to "Sign up now!", '/users/sign_up', class: "btn btn-lg btn-primary" %>
 
 <%end%>
 
 	</div>
 
+</div>
 
 
-</body></html>
