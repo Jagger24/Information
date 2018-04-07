@@ -15,12 +15,16 @@
 	<%= link_to 'Sign out', destroy_user_session_path,{:method =>:delete}%>
 	<%= @test.user_id%>
 	<!--need website content here-->
-
-	
+		<h1>Personal Information</h1>
+		<button>Passwords</button>
+		<button>Documents</button>
+		<button>Birthdays</button>
+		<button>Addresses</button>	
 
 <%else%>
 	
 	<%= link_to "Sign up now!", '/users/sign_up', class: "btn btn-lg btn-primary" %>
+
 
 <%end%>
 
