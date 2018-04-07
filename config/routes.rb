@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :presets
   resources :attempts
   devise_for :users, controllers: {registration: "user/registrations"}
   get 'welcome/index'

@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @preset.code %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @preset.user_id %>
+</p>
+
+<%= link_to 'Edit', edit_preset_path(@preset) %> |
+<%= link_to 'Back', presets_path %>
