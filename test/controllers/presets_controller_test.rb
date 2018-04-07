@@ -17,7 +17,7 @@ class PresetsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create preset" do
     assert_difference('Preset.count') do
-      post presets_url, params: { preset: { code: @preset.code, user_id: @preset.user_id } }
+      post presets_url, params: { preset: { code: @preset.code, email: @preset.email } }
     end
 
     assert_redirected_to preset_url(Preset.last)
@@ -34,7 +34,7 @@ class PresetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update preset" do
-    patch preset_url(@preset), params: { preset: { code: @preset.code, user_id: @preset.user_id } }
+    patch preset_url(@preset), params: { preset: { code: @preset.code, email: @preset.email } }
     assert_redirected_to preset_url(@preset)
   end
 
