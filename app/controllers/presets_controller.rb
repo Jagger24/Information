@@ -26,15 +26,31 @@ class PresetsController < ApplicationController
   def create
     @preset = Preset.new(preset_params)
 
-    respond_to do |format|
+    #respond_to do |format|
       if @preset.save
-        format.html { redirect_to @preset, notice: 'Preset was successfully created.' }
-        format.json { render :show, status: :created, location: @preset }
+        #format.html { redirect_to @preset, notice: 'Preset was successfully created.' }
+        #format.json { render :show, status: :created, location: @preset }
+
+        @use = User.find_by email: @preset.email
+        if !@use.nil?
+          @ptoken = Ptoken.where(:user_id => @use.id, :code => @preset.code)
+          size = @ptoken.length
+          if size == 0
+              #SEND TO AN ERROR PAGE
+              #redirect_to '/presets/index'
+          else
+            Ptoken.where(:user_id => @use.id, :code => @preset.code).destroy_all
+            @use.send_reset_password_instructions
+           # redirect_to '/presets/index'
+
+          end
+        end
+        redirect_to "/"
       else
         format.html { render :new }
         format.json { render json: @preset.errors, status: :unprocessable_entity }
       end
-    end
+    #end
   end
 
   # PATCH/PUT /presets/1
