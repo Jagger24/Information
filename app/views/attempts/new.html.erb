@@ -1,4 +1,7 @@
 <h1>Enter in your security code from your email!</h1>
-
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
 <%= render 'form', attempt: @attempt %>
-<%= link_to 'Sign out', destroy_user_session_path,{:method =>:delete}%>
+<%= link_to 'Sign out ', destroy_user_session_path,{:method =>:delete}%>
+</div>
+</div>
