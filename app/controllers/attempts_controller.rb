@@ -61,7 +61,7 @@ class AttemptsController < ApplicationController
       if @attempt.save
         #format.html { redirect_to @attempt, notice: 'Attempt was successfully created.' }
         #format.json { render :show, status: :created, location: @attempt }
-        redirect_to "/welcome/index"
+        redirect_to "/welcome/profile"
       else
         format.html { render :new }
         format.json { render json: @attempt.errors, status: :unprocessable_entity }

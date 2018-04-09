@@ -36,6 +36,15 @@ class WelcomeController < ApplicationController
 	 	 end
  	end
   end
-  def show
+  #user profile page
+  def profile
+  	@user = current_user
   end
+  #notify user email was sent to change password
+  def notice
+  end
+  #notify password change
+  	def notice_pwchange
+    end
+  
 end

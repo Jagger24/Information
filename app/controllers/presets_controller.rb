@@ -45,7 +45,7 @@ class PresetsController < ApplicationController
 
           end
         end
-        redirect_to "/"
+        redirect_to "/welcome/notice"
       else
         format.html { render :new }
         format.json { render json: @preset.errors, status: :unprocessable_entity }
@@ -60,6 +60,8 @@ class PresetsController < ApplicationController
       if @preset.update(preset_params)
         format.html { redirect_to @preset, notice: 'Preset was successfully updated.' }
         format.json { render :show, status: :ok, location: @preset }
+        
+        redirect_to "/welcome/notice_pwchange"
       else
         format.html { render :edit }
         format.json { render json: @preset.errors, status: :unprocessable_entity }
