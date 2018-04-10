@@ -41,11 +41,12 @@ class PresetsController < ApplicationController
           else
             Ptoken.where(:user_id => @use.id, :code => @preset.code).destroy_all
             @use.send_reset_password_instructions
-           # redirect_to '/presets/index'
+            redirect_to "/welcome/notice"
+           
 
           end
         end
-        redirect_to "/welcome/notice"
+        #redirect_to "/welcome/incorrect"
       else
         format.html { render :new }
         format.json { render json: @preset.errors, status: :unprocessable_entity }

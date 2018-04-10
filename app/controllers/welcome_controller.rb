@@ -29,6 +29,8 @@ class WelcomeController < ApplicationController
 	  		if @token_code == @attempt_code
 	  			@mail = current_user.email
 	  			Token.where(:user_id => current_user.id).destroy_all
+          flash[:notice] = 'Incorrect code'
+          redirect_to "/welcome/profile"
 	  		#if their attempt was incorrect, let them try again
 	  		else 
 	  			redirect_to "/attempts/new"
