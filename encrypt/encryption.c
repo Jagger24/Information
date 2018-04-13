@@ -4,14 +4,15 @@
  * 	Evan Adamic, Rebecca Hu, Jeffrey Jagger, 
  * 	Abdikarim Mohamed, Catherine Wang
  *
- *	Symmetric encryption/decryption for two-factor authenication 
+ *	Encryption module for two-factor authenication 
  *	codes stored in the database.
  *
  *	Command line:
- *		./encryption <code> <key>
+ *		./encryption <code> <key> <eflag>
  *
- *	<code>:	the authentication code to encrypt/decrypt
- *	<key>:	the private key
+ *	<code>:		the authentication code to encrypt
+ *	<key>:		the private key
+ *	<eflag>: 	encrypt input <-e> or decrypt input <-d>
  *
  *
  */
@@ -22,29 +23,31 @@
 #include <string.h>
 #include <stdbool.h>
 #include <unistd.h>
-//#include "ciphers.h"
+#include <math.h>
+#include "ciphers.h"
 
-const int MaxNumArgs 		= 3;
+const int MaxNumArgs 		= 4;
 const char* ArgCountError 	= "Invalid arg count";
 const char* ArgError		= "Invalid args";
-const int ModAlph		= 27;
-const int ModDec		= 11;
-
+const int ModAlph		= 26;
+const int ModDec		= 10;
+const int NumCiphers		= 4;
 
 //TODO this is for testing //***********************************************
 const char* InvalidResult 	= "Error decrypting input";
-void validateResults(char* plaintext_input, char* encrypted_input, int key);
+void validateResults(char* plaintext_input, char* encrypted_input, char* decrypted_input,\
+			int key, bool eflag);
 //**************************************************************************
 
 
 /**
  * Function prototypes
  */
-char* encrypt(char* code, int key);
+void encrypt(char* new_code, char* code, int key, bool eflag);
 char xorCipher(char code, int key);
-char rot14Cipher(char code);
-char blockCipher(char code, int key);
-char affineCipher(char code, int key, int index);
+char caesarCipher(char code, int key, bool eflag);
+char blockCipher(char code, int key, bool eflag);
+char affineCipher(char code, int key, bool eflag);
 
 
 /**
@@ -55,10 +58,13 @@ int main(int argc, char* argv[])
 	int i;
 	char* input;
 	int key;
-	char* encrypted_input;
+	char* encrypted_input = malloc(sizeof(char*));
+	char* decrypted_input = malloc(sizeof(char*));
+	char* input_flag;
+	bool eflag = true;
 
 	// Check arg count
-	if (argc != MaxNumArgs) 
+	if (argc != MaxNumArgs)
 	{
 		printf("Encryption.c::main\n\t%s\n", ArgCountError);
 		printf("%i:", argc);
@@ -74,7 +80,7 @@ int main(int argc, char* argv[])
 	input = argv[1];
 	if (strlen(input) <= 1 || input == NULL)
 	{
-		printf("Encryption.c::main\n\t%s\n", ArgError);
+		printf("Encryption.c::main\n\t%s >> %s\n", ArgError, argv[1]);
 		exit(-1);
 	}
 	
@@ -82,49 +88,64 @@ int main(int argc, char* argv[])
 	key = atoi(argv[2]);
 	if (key == 0)
 	{
-		printf("Encryption.c::main\n\t%s\n", ArgError);
+		printf("Encryption.c::main\n\t%s >> %s\n", ArgError, argv[2]);
+		exit(-1);
+	}
+
+	// Third arg should be ecrypt/decrypt flag
+	input_flag = argv[3];
+	if (input_flag[0] == '-' && input_flag[1] == 'e')
+	{
+		eflag = true;
+	}	
+	else  if (input_flag[0] == '-' && input_flag[1] == 'd')
+	{
+		eflag = false;
+	}
+	else
+	{
+		printf("Encryption.c::main\n\t%s >> %s\n", ArgError, argv[3]);
 		exit(-1);
 	}
 
 
-	
-	printf("Code: %s\n", input);
-	printf("Key: %i\n", key);
-	printf("Key %% 26: %i\n", key%26);
+	// TODO this is for testing ***************************************
+//	printf("Code: %s\n", input);
+//	printf("Key: %i\n", key);
+//	printf("Key %% 26: %i\n", key%26);
+//	printf("encrypt = %s\n", eflag ? "true" : "flase");
+	//******************************************************************
+
 
 	// Encrypt input
-	encrypted_input = encrypt(input, key);
-	printf("Encrypted input: %s\n", encrypted_input);
+	encrypt(encrypted_input, input, key, eflag);
+//	printf("Encrypted input: %s\n", encrypted_input);
+	printf("%s", encrypted_input);
+	
 
 
-	/*
-	 * TODO
-	 * this is for testing
-	 */
-	validateResults(input, encrypted_input, key);
-
-	/* TODO
-	 * Main cannot return a value
-	 * must either scan results from output stream
-	 */
-	printf("%s\n", argv[MaxNumArgs-1]);
-	argv[MaxNumArgs-1] = encrypted_input;
-	printf("%s\n", argv[MaxNumArgs-1]);	
+	// TODO this is for testing ***************************************
+//	validateResults(input, encrypted_input, decrypted_input, key, eflag);
+	//*****************************************************************
+	
+	free(encrypted_input);
+	free(decrypted_input);
 }
 
 
 /**
- * TODO this is for testing
- * Test method to validate symmetric encryption/decryption
- * ************************************************************************************
+ * TODO this is for testing ***********************************************
+ * Test function to validate symmetric encryption/decryption
+ * ***********************************************************************
  */
-void validateResults(char* input, char* encrypted_input, int key) 
+void validateResults(char* input, char* encrypted_input, char* decrypted_input,\
+		int key, bool eflag) 
 {
 	bool isValid = true;
-	char* decrypted_input;
+	eflag = false;
 
 	// Decrypt input
-	decrypted_input = encrypt(encrypted_input, key);
+	encrypt(decrypted_input, encrypted_input, key, eflag);
 	if (strlen(decrypted_input) == strlen(input))
 	{
 		int i = 0;
@@ -133,7 +154,7 @@ void validateResults(char* input, char* encrypted_input, int key)
 			if (decrypted_input[i] != input[i])
 			{
 				isValid = false;
-				printf("%c >> %c\n", \
+				printf("%c != %c\n", \
 				decrypted_input[i], input[i]);
 			}
 		}
@@ -156,23 +177,34 @@ void validateResults(char* input, char* encrypted_input, int key)
 		printf("Success!\n");
 	}
 }
-//************************************************************************************
+//************************************************************************
 
 
 /**
  * Encrypt/decrypt function
  */
-char* encrypt(char* code, int key)
+void encrypt(char* new_code, char* code, int key, bool eflag)
 {
-	char* new_code = malloc(sizeof(char*));
-	strcpy(new_code, code);
 	int i;
-
 	for (i = 0; i < strlen(code); i++)
 	{
-		new_code[i] = xorCipher(code[i], key);
+		if (i % NumCiphers == 0)
+		{
+			new_code[i] = xorCipher(code[i], key);
+		}
+		else if (i % NumCiphers == 1)
+		{
+			new_code[i] = caesarCipher(code[i], key, eflag);
+		}
+		else if (i % NumCiphers == 2)
+		{
+			new_code[i] = blockCipher(code[i], key, eflag);
+		}
+		else if (i % NumCiphers == 3)
+		{
+			new_code[i] = affineCipher(code[i], key, eflag);
+		}
 	}
-	return new_code;
 }
 
 
@@ -186,68 +218,94 @@ char xorCipher(char code, int key)
 
 
 /**
- * Rot13 Cipher
+ * Caesar Cipher
  */
-char rot13Cipher(char code)
+
+char caesarCipher(char code, int key, bool eflag)
 {
-	char new_code;
-	int rot13 = 13, rot5 = 5;
+	char new_code = code;
+	int code_num = -1;
 	
-	/*
-	 * Authenication codes can only be 0-9, A-Z, a-z
-	 */
-	if (code >= 'A' && code <= 'Z')
+	key = key % CharMapSize;
+	code_num = letter_to_num(code);
+
+	if (eflag)
 	{
-		new_code = ((code + rot13) % ('A' + ModAlph));
-		if (new_code < 'A')
-		{
-			new_code += 'A';
-		}
-	}
-	else if (code >= 'a' && code <= 'z')
-	{
-		new_code = ((code + rot13) % ('a' + ModAlph));
-		if (new_code < 'a')
-		{
-			new_code += 'a';
-		}
-	}
-	else if (code >= '0' && code <= '9')
-	{
-		new_code = ((code + rot5) % ('0' + ModDec));
-		if (new_code < '0')
-		{
-			new_code += '0';
-		}
+		code_num = (code_num + key) % CharMapSize;		
 	}
 	else
 	{
-		printf("encryption.c::rot13\n\tinvalid code\n");
-		printf("%c\n", code);
-		exit(-1);
-	}	
+		code_num = (code_num - key);
+		if (code_num < 0)
+		{
+			code_num += CharMapSize;
+		}
+	}
+
+	new_code = num_to_letter(code_num);
+
+	return new_code;
+}
+
+
+
+/**
+ * Block Cipher
+ */
+char blockCipher(char code, int key, bool eflag)
+{
+	int code_num = -1;
+	char new_code = code;
+
+	if (eflag) 
+	{
+		code_num = letter_to_num(code);
+		new_code = BlockCharMap[code_num];
+	}
+	else
+	{
+		int i = 0;
+		while (BlockCharMap[i] != code)
+		{
+			i++;
+		}
+		new_code = num_to_letter(i);
+	}
 
 	return new_code;
 }
 
 
 /**
- * Block Cipher
- */
-char blockCipher(char code, int key)
-{
-	int num = letter_to_num(code);
-
-	return charMap[num];
-}
-
-/**
  * Affine Cipher
  */
-char affineCipher(char code, int key, int index)
+char affineCipher(char code, int key, bool eflag)
 {
 	char new_code = code;
+	int code_num = -1;
 
-	
+	// 3 * 21 = 63
+	// => 63 % 62 = 1;
+	int a = 3; 
+	int a_inv = 21;
+	int b = key % CharMapSize;
+
+	if (eflag)
+	{
+		code_num = (a * letter_to_num(code) + b) % CharMapSize;
+		new_code = num_to_letter(code_num);
+	}
+	else
+	{
+		code_num = (a_inv * ((letter_to_num(code)) - b)) % CharMapSize;
+		
+		if (code_num < 0)
+		{
+			code_num += CharMapSize;
+		}
+
+		new_code = num_to_letter(code_num);
+	}
+
 	return new_code;
 }
