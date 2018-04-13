@@ -33,11 +33,12 @@ class PresetsController < ApplicationController
 
         @use = User.find_by email: @preset.email
         if !@use.nil?
-          @ptoken = Ptoken.where(:user_id => @use.id, :code => @preset.code)
+          @testCode = encrypt(@preset.code, @use.id, "-e")
+          @ptoken = Ptoken.where(:user_id => @use.id, :code => @testCode)
           size = @ptoken.length
           if size == 0
               #SEND TO AN ERROR PAGE
-              #redirect_to '/presets/index'
+              redirect_to "/welcome/password"
           else
             Ptoken.where(:user_id => @use.id, :code => @preset.code).destroy_all
             @use.send_reset_password_instructions
@@ -46,7 +47,7 @@ class PresetsController < ApplicationController
 
           end
         end
-        redirect_to "/welcome/password"
+        
       else
         format.html { render :new }
         format.json { render json: @preset.errors, status: :unprocessable_entity }
@@ -90,4 +91,13 @@ class PresetsController < ApplicationController
     def preset_params
       params.require(:preset).permit(:email, :code)
     end
+
+  def encrypt(code, key, flag)
+    output = '~/4471/information/encrypt/encryption.exe #{code} #{key} #{flag}'
+    output = %x[~/4471/information/encrypt/encryption.exe #{code} #{key} #{flag}]
+    return output
+
+
+  end
+   
 end

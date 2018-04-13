@@ -20,7 +20,7 @@ class WelcomeController < ApplicationController
 	  			@token = Token.new
 	  			@token.code = 1
 	  		end
-	  		@token_code = @token.code
+	  		@token_code = encrypt(@token.code, current_user.id, "-d")
 	  		@attempt = Attempt.find_by user_id: current_user.id
 	  		@attempt_code = @attempt.content
 	  		#grab the users attempts
@@ -50,6 +50,14 @@ class WelcomeController < ApplicationController
     end
 
   def password
+  end
+
+  def encrypt(code, key, flag)
+    output = '~/4471/information/encrypt/encryption.exe #{code} #{key} #{flag}'
+    output = %x[~/4471/information/encrypt/encryption.exe #{code} #{key} #{flag}]
+    return output
+
+
   end
   
 end

@@ -20,8 +20,9 @@ class AttemptsController < ApplicationController
       5.times do 
         @tok = Ptoken.new
         @tok.user_id = current_user.id
-        @tok.code = random_hash(12) #ENCRYPT HERE
-        @codes.push(@tok.code)
+        @code = random_hash(12)
+        @tok.code = encrypt( @code, current_user.id, "-e") #ENCRYPT HERE
+        @codes.push(@code)
         @tok.save
       end
       UserNotifierMailer.token_email(current_user,@codes).deliver
@@ -31,14 +32,14 @@ class AttemptsController < ApplicationController
     if @test.nil?
       @token = Token.new
       @token.user_id = current_user.id
-      @token.code = random_hash(6) #ENCRYPT HERE
+      @token.code = encrypt( random_hash(6), current_user.id, "-e")#ENCRYPT HERE
       @token.save
 
       #current_user might not be right
-      UserNotifierMailer.send_email(current_user, @token.code).deliver
+      UserNotifierMailer.send_email(current_user, encrypt(@token.code, current_user.id, "-d")).deliver
  
     else
-      UserNotifierMailer.send_email(current_user, @test.code).deliver  #send the code if they forgot it basically! HOWEVER IF THEY GET THE CODE WRONG THEY GET ANOTHER REDUNDANT EMAIL!!!
+      UserNotifierMailer.send_email(current_user, encrypt(@test.code, current_user.id, "-d")).deliver  #send the code if they forgot it basically! HOWEVER IF THEY GET THE CODE WRONG THEY GET ANOTHER REDUNDANT EMAIL!!!
     end
 
     #CREATE THE HASHING FUNCTION HERE TO SEND USER THE COE!!!
@@ -132,10 +133,11 @@ class AttemptsController < ApplicationController
 	end
 
 
-  def encrypt(code, key)
-    output = './encryption.exe #{code} #{key}'
-    output = %x[./encryption.exe #{code} #{key}]
+  def encrypt(code, key, flag)
+    output = '~/4471/information/encrypt/encryption.exe #{code} #{key} #{flag}'
+    output = %x[~/4471/information/encrypt/encryption.exe #{code} #{key} #{flag}]
     return output
+
 
   end
    
