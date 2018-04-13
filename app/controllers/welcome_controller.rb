@@ -48,5 +48,8 @@ class WelcomeController < ApplicationController
   #notify password change
   	def notice_pwchange
     end
+
+  def password
+  end
   
 end

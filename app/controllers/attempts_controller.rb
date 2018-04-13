@@ -20,7 +20,7 @@ class AttemptsController < ApplicationController
       5.times do 
         @tok = Ptoken.new
         @tok.user_id = current_user.id
-        @tok.code = random_hash(12)
+        @tok.code = random_hash(12) #ENCRYPT HERE
         @codes.push(@tok.code)
         @tok.save
       end
@@ -31,7 +31,7 @@ class AttemptsController < ApplicationController
     if @test.nil?
       @token = Token.new
       @token.user_id = current_user.id
-      @token.code = random_hash(6)
+      @token.code = random_hash(6) #ENCRYPT HERE
       @token.save
 
       #current_user might not be right
@@ -130,6 +130,14 @@ class AttemptsController < ApplicationController
 
 	#end method
 	end
+
+
+  def encrypt(code, key)
+    output = './encryption.exe #{code} #{key}'
+    output = %x[./encryption.exe #{code} #{key}]
+    return output
+
+  end
    
 
 end

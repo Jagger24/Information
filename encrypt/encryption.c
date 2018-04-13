@@ -229,25 +229,3 @@ char rot13Cipher(char code)
 
 	return new_code;
 }
-
-
-/**
- * Block Cipher
- */
-char blockCipher(char code, int key)
-{
-	int num = letter_to_num(code);
-
-	return charMap[num];
-}
-
-/**
- * Affine Cipher
- */
-char affineCipher(char code, int key, int index)
-{
-	char new_code = code;
-
-	
-	return new_code;
-}

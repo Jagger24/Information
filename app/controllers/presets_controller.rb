@@ -46,7 +46,7 @@ class PresetsController < ApplicationController
 
           end
         end
-        #redirect_to "/welcome/incorrect"
+        redirect_to "/welcome/password"
       else
         format.html { render :new }
         format.json { render json: @preset.errors, status: :unprocessable_entity }
