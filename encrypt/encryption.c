@@ -4,17 +4,18 @@
  * 	Evan Adamic, Rebecca Hu, Jeffrey Jagger, 
  * 	Abdikarim Mohamed, Catherine Wang
  *
- *	Encryption module for two-factor authenication 
+ *	Encryption/decryption module for two-factor authenication 
  *	codes stored in the database.
  *
+ * 	Compile using Makefile
+ * 		$ make (see Makefile)
+ *
  *	Command line:
- *		./encryption <code> <key> <eflag>
+ *		$ encryption.exe <code> <key> <eflag>
  *
- *	<code>:		the authentication code to encrypt
- *	<key>:		the private key
- *	<eflag>: 	encrypt input <-e> or decrypt input <-d>
- *
- *
+ *	<code>:		The authentication code to encrypt.
+ *	<key>:		The private key used for encryption.
+ *	<eflag>: 	Encrypt <-e> or decrypt <-d> input.
  */
 
 
@@ -48,6 +49,7 @@ char xorCipher(char code, int key);
 char caesarCipher(char code, int key, bool eflag);
 char blockCipher(char code, int key, bool eflag);
 char affineCipher(char code, int key, bool eflag);
+int gcd(int a, int b);
 
 
 /**
@@ -67,7 +69,7 @@ int main(int argc, char* argv[])
 	if (argc != MaxNumArgs)
 	{
 		printf("Encryption.c::main\n\t%s\n", ArgCountError);
-		printf("%i:", argc);
+		printf("%i :", argc);
 		for (i = 0; i < argc; i++)
 		{
 			printf("%s ", argv[i]);
@@ -122,7 +124,7 @@ int main(int argc, char* argv[])
 //	printf("Encrypted input: %s\n", encrypted_input);
 	printf("%s", encrypted_input);
 	
-
+	printf("\n");
 
 	// TODO this is for testing ***************************************
 //	validateResults(input, encrypted_input, decrypted_input, key, eflag);
@@ -142,7 +144,7 @@ void validateResults(char* input, char* encrypted_input, char* decrypted_input,\
 		int key, bool eflag) 
 {
 	bool isValid = true;
-	eflag = false;
+	eflag = !eflag;
 
 	// Decrypt input
 	encrypt(decrypted_input, encrypted_input, key, eflag);
@@ -182,27 +184,42 @@ void validateResults(char* input, char* encrypted_input, char* decrypted_input,\
 
 /**
  * Encrypt/decrypt function
+ *
+ * 	Iterate over the code to encrypt/decrypt character by character using multiple 
+ * cipher algorithms in a "round robin" schedule. Each encrypt/decrypt algorithm is
+ * executed in its respective function call.
+ * 	1. XOR
+ * 	2. Caesar
+ * 	3. Block
+ * 	4. Affine
+ * 	(repeat until '\0')
+ * 
+ * char* <new_code>:	Pointer to the new code generated from encrypting/decrypting <code>.
+ * char* <code>:	Pointer to the code argument given to be encrypted/decrypted.
+ * int <key>:		Integer value key argument used to encrypt/decrypt input <code>.
+ * bool <eflag>:	Boolean flag to determine whether to encrypt or decrypt <code>.
  */
 void encrypt(char* new_code, char* code, int key, bool eflag)
 {
 	int i;
 	for (i = 0; i < strlen(code); i++)
 	{
-		if (i % NumCiphers == 0)
+		switch (i % NumCiphers) 
 		{
-			new_code[i] = xorCipher(code[i], key);
-		}
-		else if (i % NumCiphers == 1)
-		{
-			new_code[i] = caesarCipher(code[i], key, eflag);
-		}
-		else if (i % NumCiphers == 2)
-		{
-			new_code[i] = blockCipher(code[i], key, eflag);
-		}
-		else if (i % NumCiphers == 3)
-		{
-			new_code[i] = affineCipher(code[i], key, eflag);
+			case 0:	
+				new_code[i] = xorCipher(code[i], key);
+				break;
+			case 1:	
+				new_code[i] = caesarCipher(code[i], key, eflag);
+				break;
+			case 2:
+				new_code[i] = blockCipher(code[i], key, eflag);
+				break;
+			case 3:
+				new_code[i] = affineCipher(code[i], key, eflag);
+				break;
+			default:
+				break;
 		}
 	}
 }
@@ -210,6 +227,11 @@ void encrypt(char* new_code, char* code, int key, bool eflag)
 
 /**
  * XOR Cipher
+ *
+ * 	XOR operation on char <code> using <key> % ModAlph. The modulo 
+ * operation is done on key to remove side effects of ASCII translation 
+ * into the NULL character (0x0). XOR is symmetric, so the eflag is not 
+ * needed.
  */
 char xorCipher(char code, int key) 
 {
@@ -219,15 +241,18 @@ char xorCipher(char code, int key)
 
 /**
  * Caesar Cipher
+ *
+ * 	Caesar substitution on char <code> using <key> % CharMapSize. <code> 
+ * is either encrypted or decrypted depending on eflag=true/false respectively. 
+ * This function is dependent on ciphers.c function definitions for 
+ * letter_to_num() and num_to_letter().
  */
-
 char caesarCipher(char code, int key, bool eflag)
 {
 	char new_code = code;
-	int code_num = -1;
+	int code_num = letter_to_num(code);
 	
 	key = key % CharMapSize;
-	code_num = letter_to_num(code);
 
 	if (eflag)
 	{
@@ -248,18 +273,21 @@ char caesarCipher(char code, int key, bool eflag)
 }
 
 
-
 /**
  * Block Cipher
+ *
+ * 	Block substitution based on arbitrary BlockCharMap (ciphers.c). The
+ * alphanumeric character <code> is mapped to its correspoonding alphanumeric
+ * character in BlockCharMap or back to its plaintext depending on eflag=true/
+ * false respectively.
  */
 char blockCipher(char code, int key, bool eflag)
 {
-	int code_num = -1;
 	char new_code = code;
 
 	if (eflag) 
 	{
-		code_num = letter_to_num(code);
+		int code_num = letter_to_num(code);
 		new_code = BlockCharMap[code_num];
 	}
 	else
@@ -278,17 +306,30 @@ char blockCipher(char code, int key, bool eflag)
 
 /**
  * Affine Cipher
+ *
+ * 	Affine cipher is done on <code> using <key> % CharMapSize. This done 
+ * by computing a value 'a' such that a is coprime with the alphabet size 
+ * CharMapSize, and a*a^-1 Mod alphabet_size = 1. 'b' is an arbitrary offset
+ * (as long as a != 1) similar to Caesar cipher. 
  */
 char affineCipher(char code, int key, bool eflag)
 {
 	char new_code = code;
-	int code_num = -1;
-
-	// 3 * 21 = 63
-	// => 63 % 62 = 1;
-	int a = 3; 
-	int a_inv = 21;
+	int code_num;
+	int a = key % CharMapSize;
+	int a_inv = (CharMapSize + 1) / a;
 	int b = key % CharMapSize;
+
+	/*
+	 * Example:
+	 * 3 * 21 = 63
+	 * 	=> 63 % 62 = 1;
+	 */
+	while ( (a*a_inv) % CharMapSize != 1 || gcd(a, CharMapSize) > 1 )
+	{
+		a++;
+		a_inv = (CharMapSize + 1) / a;
+	}
 
 	if (eflag)
 	{
@@ -309,3 +350,21 @@ char affineCipher(char code, int key, bool eflag)
 
 	return new_code;
 }
+
+/**
+ * Greatest Common Denominator function
+ *
+ * Returns the GCD of 'a' and 'b'
+ */
+int gcd(int a, int b)
+{
+	int temp;
+	while (b != 0)
+	{
+		temp = a % b;
+		a = b;
+		b = temp;
+	}
+	return a;
+}
+// EoF

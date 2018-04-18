@@ -1,3 +1,10 @@
+/*
+ * Evan Adamic, Rebecca Hu, Jeffrey Jagger, 
+ * 	Abdikarim Mohamed, Catherine Wang
+ * CSE 4471
+ * Last update: 4/17/18
+ */
+
 
 #ifndef CIPHERS_H_
 #define CIPHERS_H_
