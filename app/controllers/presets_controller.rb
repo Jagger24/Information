@@ -1,3 +1,4 @@
+#AUTHOR Jeff and Abdi
 class PresetsController < ApplicationController
   before_action :set_preset, only: [:show, :edit, :update, :destroy]
 
@@ -5,6 +6,7 @@ class PresetsController < ApplicationController
   # GET /presets.json
   def index
     @presets = Preset.all
+    #this is an administrative page used to test and see all attempts from users
   end
 
   # GET /presets/1
@@ -15,6 +17,7 @@ class PresetsController < ApplicationController
   # GET /presets/new
   def new
     @preset = Preset.new
+    #This is the page that useres see to create a new attempt
   end
 
   # GET /presets/1/edit
@@ -24,24 +27,36 @@ class PresetsController < ApplicationController
   # POST /presets
   # POST /presets.json
   def create
-    @preset = Preset.new(preset_params)
-
-    #respond_to do |format|
-      if @preset.save
-        #format.html { redirect_to @preset, notice: 'Preset was successfully created.' }
-        #format.json { render :show, status: :created, location: @preset }
-
+    #grab the info that the user entered in
+    @preset = Preset.new(preset_params) 
+    
+      if @preset.save #if the preset saved correctly
+   
+        #find the user by their email because they are not logged in
         @use = User.find_by email: @preset.email
+
+        #if the user entered in a proper email
         if !@use.nil?
+          #take the code that they created and encrypt it
           @testCode = encrypt(@preset.code, @use.id, "-e")
+
+          #after it is encrypted try to find a similar encrypted code with their user id
           @ptoken = Ptoken.where(:user_id => @use.id, :code => @testCode)
+
+          #check the length of ptoken array
           size = @ptoken.length
           if size == 0
               #SEND TO AN ERROR PAGE
               redirect_to "/welcome/password"
           else
-            Ptoken.where(:user_id => @use.id, :code => @preset.code).destroy_all
+
+            #if there is an existing encrypted token that matches the entry.
+            #then destroy that code as it is a one time use
+            Ptoken.where(:user_id => @use.id, :code => @testCode).destroy_all
+            #send the user a reset password instruction email!
             @use.send_reset_password_instructions
+
+            #reditect them to the notice about the email being sent
             redirect_to "/welcome/notice"
            
 
@@ -52,7 +67,7 @@ class PresetsController < ApplicationController
         format.html { render :new }
         format.json { render json: @preset.errors, status: :unprocessable_entity }
       end
-    #end
+    
   end
 
   # PATCH/PUT /presets/1
@@ -85,13 +100,17 @@ class PresetsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_preset
       @preset = Preset.find(params[:id])
+      #set the params that the user set
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def preset_params
       params.require(:preset).permit(:email, :code)
+      #get the parameteres from the user
     end
 
+  #This function will be used to encrypt the codes that the users enter in
+  #The controller will then compare the encrypted codes to eachother.
   def encrypt(code, key, flag)
     output = '~/4471/information/encrypt/encryption.exe #{code} #{key} #{flag}'
     output = %x[~/4471/information/encrypt/encryption.exe #{code} #{key} #{flag}]

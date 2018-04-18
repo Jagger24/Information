@@ -1,3 +1,4 @@
+#AUTHOR Jeff Jagger and Abdi
 class AttemptsController < ApplicationController
   before_action :set_attempt, only: [:show, :edit, :update, :destroy]
 
@@ -5,6 +6,8 @@ class AttemptsController < ApplicationController
   # GET /attempts.json
   def index
     @attempts = Attempt.all
+
+    #Test/administrative page to view all of the attempts
   end
 
   # GET /attempts/1
@@ -14,6 +17,8 @@ class AttemptsController < ApplicationController
 
   # GET /attempts/new
   def new
+    #this is the page that allows the user to attempt a 2-factor log-in
+    #This function will also create 5 codes for the user to retrieve their password if they do not have any
     @sign_up = Ptoken.find_by user_id: current_user.id
     if @sign_up.nil? #create 5 password retrieval tokens if they have 0!
       @codes = Array.new
@@ -107,6 +112,7 @@ class AttemptsController < ApplicationController
 
    
 	#Hash Code Function
+  #AUTHOR Catherine Wang
 	def random_hash(number)
 
 	   hash = ""

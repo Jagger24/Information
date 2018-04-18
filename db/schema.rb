@@ -10,8 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180409054703) do
 
+# Authors Jeff and Abdi
+#This is our database schema which creates the models for our project
+
+ActiveRecord::Schema.define(version: 20180409054703) do
+  
+  #The attempts controller keeps track of each user's attempts at logging with with 2-factor authentication
   create_table "attempts", force: :cascade do |t|
     t.string "content"
     t.integer "user_id"
@@ -19,6 +24,7 @@ ActiveRecord::Schema.define(version: 20180409054703) do
     t.datetime "updated_at", null: false
   end
 
+  #The presets table keeps track of password reset requests from users
   create_table "presets", force: :cascade do |t|
     t.string "email"
     t.string "code"
@@ -26,6 +32,7 @@ ActiveRecord::Schema.define(version: 20180409054703) do
     t.datetime "updated_at", null: false
   end
 
+  #this table holds the encrypted tokens users can use to retrieve their password
   create_table "ptokens", force: :cascade do |t|
     t.integer "user_id"
     t.string "code"
@@ -34,6 +41,7 @@ ActiveRecord::Schema.define(version: 20180409054703) do
     t.string "email"
   end
 
+  #The tokens table holds the encrypted one time tokens used for 2-factor authentication
   create_table "tokens", force: :cascade do |t|
     t.integer "user_id"
     t.string "code"
@@ -41,6 +49,7 @@ ActiveRecord::Schema.define(version: 20180409054703) do
     t.datetime "updated_at", null: false
   end
 
+  #THIS TABLE IS CREATED FROM DEVISE THE RUBY GEM WE DID NOT CREATE THIS TABLE BUT IT IS VERY IMPORTANT FOR USERS THAT USE THIS FOR THE FIRST FACTOR OF AUTHENTICATION
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
